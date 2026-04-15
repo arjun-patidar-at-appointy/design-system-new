@@ -1,8 +1,35 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    `maven-publish`
+}
+
+// GitHub Packages requires groupId to match repo owner (com.github.<owner>)
+group = "com.github.arjun-patidar-at-appointy"
+version = "1.0.3"
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/arjun-patidar-at-appointy/design-system-new")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR") ?: project.findProperty("gpr.user") as String? ?: ""
+                password = System.getenv("GITHUB_TOKEN") ?: project.findProperty("gpr.key") as String? ?: ""
+            }
+        }
+    }
+}
+
+// GitHub Packages Maven registry does not accept .klib (Kotlin/Native) artifacts, so skip iOS publications.
+// Android + root (kotlinMultiplatform) will still publish. For iOS, use XCFramework/SPM separately.
+afterEvaluate {
+    tasks.matching { it.name.contains("Ios") && it.name.contains("GitHubPackages") }.configureEach {
+        enabled = false
+    }
 }
 
 kotlin {
@@ -12,6 +39,8 @@ kotlin {
         }
     }
 
+    // XCFramework: single binary for device + simulator, used for Swift Package Manager (iOS publish)
+    val xcf = XCFramework("Shared")
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -19,6 +48,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "Shared"
             isStatic = true
+            xcf.add(this)
         }
     }
 
