@@ -9,7 +9,7 @@ plugins {
 
 // GitHub Packages requires groupId to match repo owner (com.github.<owner>)
 group = "com.github.arjun-patidar-at-appointy"
-version = "1.0.3"
+version = "1.0.4"
 
 publishing {
     repositories {

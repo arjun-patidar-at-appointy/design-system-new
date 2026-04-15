@@ -14,8 +14,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "Shared",
-            url: "https://github.com/arjun-patidar-at-appointy/design-system-new/releases/download/1.0.3/Shared.xcframework.zip",
-            checksum: "d750060a64c8afea7baade5a21744abaf281d6a053b2e7b6419796ea45f00c3f"
+            url: "https://github.com/arjun-patidar-at-appointy/design-system-new/releases/download/1.0.4/Shared.xcframework.zip",
+            checksum: "187e2fe4b76c2e63143b389ba9b87f752435ab2ba653e1acde9ba8e8c2b08b32"
         ),
         .target(
             name: "DesignSystemSwiftUI",
