@@ -4,12 +4,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
     `maven-publish`
 }
 
 // GitHub Packages requires groupId to match repo owner (com.github.<owner>)
 group = "com.github.arjun-patidar-at-appointy"
-version = "1.0.4"
+version = "1.0.10"
 
 publishing {
     repositories {
@@ -33,7 +35,15 @@ afterEvaluate {
 }
 
 kotlin {
+    jvm {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
+    }
+
     androidTarget {
+        // Publish Android-compatible variants so external Android consumers can resolve androidJvm.
+        publishLibraryVariants("release", "debug")
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -53,8 +63,14 @@ kotlin {
     }
 
     sourceSets {
+        androidMain.dependencies {
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.ui)
+        }
         commonMain.dependencies {
-            // put your Multiplatform dependencies here
+            implementation(libs.compose.runtime)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
